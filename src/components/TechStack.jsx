@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { skillGroups } from "../data/skills";
 import TechIcon from "./TechIcon";
+import InfiniteTechRow from "./InfiniteTechRow";
 import { useGsap } from "../hooks/useGsap";
 import { techEntrance, techDrift } from "../animations/techStackAnimations";
 
@@ -41,15 +42,17 @@ export default function TechStack() {
               <span className="text-blue-300/70 tabular-nums">{String(gi + 1).padStart(2, "0")}</span>{g.title}
               <span className="h-px flex-1 bg-white/[0.05]" aria-hidden="true" />
             </p>
-            <div className="mt-2.5 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7">
-              {g.items.map((item) => {
-                const key = `${g.title}-${item.name}`;
-                return (
-                  <div key={key} data-tech onMouseEnter={() => setHovered(key)} onFocus={() => setHovered(key)}>
-                    <Tile item={item} dimmed={hovered !== null && hovered !== key} />
-                  </div>
-                );
-              })}
+            <div className="mt-2.5">
+              <InfiniteTechRow label={g.title} direction={gi % 2 === 0 ? "left" : "right"} speed={24 + (gi % 3) * 3}>
+                {g.items.map((item) => {
+                  const key = `${g.title}-${item.name}`;
+                  return (
+                    <div key={key} data-tech onMouseEnter={() => setHovered(key)} onFocus={() => setHovered(key)}>
+                      <Tile item={item} dimmed={hovered !== null && hovered !== key} />
+                    </div>
+                  );
+                })}
+              </InfiniteTechRow>
             </div>
           </div>
         ))}
@@ -58,10 +61,10 @@ export default function TechStack() {
         .tech-logo svg { filter: grayscale(1); transition: filter .3s ease; width: 24px; height: 24px; }
         @media (min-width: 768px) { .tech-logo svg { width: 30px; height: 30px; } }
         .tech-tile:hover .tech-logo svg { filter: grayscale(0); }
-        .tech-tile { animation: techFloat 5.5s ease-in-out infinite; }
-        .tech-tile:nth-child(2n) { animation-delay: .15s; } .tech-tile:nth-child(3n) { animation-delay: .3s; }
-        @keyframes techFloat { 0%,100% { translate: 0 0; } 50% { translate: 0 -3px; } }
-        @media (prefers-reduced-motion: reduce) { .tech-tile { animation: none !important; } }
+        .tech-track { animation-name: techMarquee; animation-timing-function: linear; animation-iteration-count: infinite; will-change: transform; }
+        .tech-marquee:hover .tech-track { animation-play-state: paused; }
+        @keyframes techMarquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+        @media (prefers-reduced-motion: reduce) { .tech-track { animation: none !important; } }
       `}</style>
     </section>
   );
